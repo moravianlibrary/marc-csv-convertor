@@ -1,6 +1,6 @@
 import argparse
 
-from FilesManager import FilesManager
+from filesmanager import FilesManager
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", help="Path to configuration file .ini.", required=True)
