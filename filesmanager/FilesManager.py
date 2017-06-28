@@ -24,16 +24,23 @@ class FilesManager:
     Class is managing input and output files.
     """
 
-    def __init__(self, input_file, output_file, config_file, separator, step):
+    def __init__(self, is_stop_words, input_file, output_file, config_file, separator, step):
         check_file(input_file, ".mrc")
         check_file(config_file, ".ini")
+        stop_words = []
+
         self.step = step
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
+        if is_stop_words:
+            string_stop_words = self.config["PREPROCESSING"]["STOP_WORDS"]
+            stop_words += list(map(lambda x: x.replace('"', ""), re.findall('"[^"]*"', string_stop_words)))
+            stop_words += re.sub('"[^"]*"', "", string_stop_words).split()
         self.input_file = input_file
         self.output_file = output_file
         self.separator = separator
-        self.preprocessor = Preprocessing(values=None, tagger=self.config["PREPROCESSING"]["TAGGER"],
+        self.preprocessor = Preprocessing(stop_words=stop_words, values=None,
+                                          tagger=self.config["PREPROCESSING"]["TAGGER"],
                                           taggerPOS=self.config["PREPROCESSING"]["TAGGER_POS"])
 
     def process_record(self, record):
@@ -59,7 +66,6 @@ class FilesManager:
                         else:
                             processed[field] = vals
 
-
                         if field in lemmatize_fields:
                             field = field + "_lemm"
                             self.preprocessor.setParams(values=vals)
@@ -67,7 +73,6 @@ class FilesManager:
                                 processed[field] += self.preprocessor.start()
                             else:
                                 processed[field] = self.preprocessor.start()
-
 
         return processed
 
@@ -89,7 +94,9 @@ class FilesManager:
 
             with open(self.output_file, "w+") as o_file:
                 marc_record = []
-                fields = list(map ( lambda x: x + "_lemm", self.config["PREPROCESSING"]["LEMMATIZE_FIELDS"].split()) ) + list(dict(self.config["FIELDS"].items()).keys())
+                fields = list(
+                    map(lambda x: x + "_lemm", self.config["PREPROCESSING"]["LEMMATIZE_FIELDS"].split())) + list(
+                    dict(self.config["FIELDS"].items()).keys())
 
                 csv_writer = csv.DictWriter(o_file, fieldnames=fields)
                 csv_writer.writeheader()
