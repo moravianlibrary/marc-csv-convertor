@@ -10,15 +10,16 @@ Obsahuje třídu pro předzpracování vstupních dat.
 import logging
 
 
+from ufal.morphodita import *
+
 
 class Preprocessing(object):
-    """
-    Třída pro předzpracování vstupních dat.
-    """
+
 
     posSigns = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Z", "X"]
 
     def __init__(self, stop_words, values, tagger, taggerPOS, logAfterLines=100):
+
         self.values = values
         self.stop_words = stop_words
         self.tagger = tagger
@@ -68,6 +69,7 @@ class RemoveWords(object):
     """
 
     def __init__(self, removeStopWords=[], minWordLength=None, maxWordLength=None):
+
         self.removeStopWords = removeStopWords
         self.minWordLength = minWordLength
         self.maxWordLength = maxWordLength
