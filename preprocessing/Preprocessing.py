@@ -8,11 +8,7 @@ Obsahuje třídu pro předzpracování vstupních dat.
 """
 
 import logging
-import re
 
-from unidecode import unidecode
-
-from ufal.morphodita import *
 
 
 class Preprocessing(object):
@@ -23,16 +19,6 @@ class Preprocessing(object):
     posSigns = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Z", "X"]
 
     def __init__(self, stop_words, values, tagger, taggerPOS, logAfterLines=100):
-        """
-        Inicializace předzpracování
-        
-        :param args:    Argumenty pro preprocessing z ArgumentsManager pro DocClassifier.
-        :param stopWords: list -- obsahující stop slova
-        :param tagger: Cesta k souboru pro tagger morphodity.
-        :param taggerPOS: Cesta k souboru pro tagger morphodity. Který bude použit pro extrakci slovních druhů.
-        :param logAfterLines: Udává po kolika přečtených řádcích má dojit k logování.
-        """
-
         self.values = values
         self.stop_words = stop_words
         self.tagger = tagger
@@ -82,24 +68,11 @@ class RemoveWords(object):
     """
 
     def __init__(self, removeStopWords=[], minWordLength=None, maxWordLength=None):
-        """
-        Konstrukce objektu.
-
-        :param removeStopWords: list -- stop slov pro odstranění
-        :param minWordLength: Minimální délka slova. Každé slovo s délkou menší než je tato bude odstraněno.
-        :param maxWordLength: Maximální délka slova. Každé slovo s délkou větší než je tato bude odstraněno.
-        """
         self.removeStopWords = removeStopWords
         self.minWordLength = minWordLength
         self.maxWordLength = maxWordLength
 
     def removeWords(self, txt):
-        """
-        Odstraní slova s definovanými vlastnostmi.
-
-        :param txt: string/list -- pro odstranění slov.
-        :returns:  list -- obsahující zbývající slova
-        """
 
         if isinstance(txt, list):
             words = txt
@@ -196,73 +169,3 @@ class Lemmatizer(object):
                 words.append(lemma.lemma)
 
         return words
-
-        # def getWordsPOS(self, text):
-        #     """
-        #     Získá slovní druhy k jednotlivým slovům v parametru text.
-        #
-        #     :param text: Text pro analýzu.
-        #     :returns:  list -- of tuples, kde (slovo, POS)
-        #     """
-        #
-        #     self.tokenizerPOS.setText(text)
-        #     words = []
-        #     while self.tokenizerPOS.nextSentence(self.forms, self.tokens):
-        #         self.taggerPOS.tag(self.forms, self.lemmas)
-        #         for i in range(len(self.lemmas)):
-        #             lemma = self.lemmas[i]
-        #             token = self.tokens[i]
-        #             self.converter.convert(lemma)
-        #             POS = lemma.tag.split("|")[0].split("=")[1]
-        #
-        #             words.append((text[token.start: token.start + token.length], POS))
-        #
-        #     return words
-
-        # def extract(self, text, only, lemmatized=True):
-        #     """
-        #     Extrahuje pouze slova, která mají definovaný slovní druh v parametru only.
-        #
-        #     :param text: Text pro extrakci.
-        #     :param only: list -- povolených slovních druhů
-        #     :param lemamatized: True -> vrátí lemmatizovanou formu slova.
-        #     :returns:  list -- obsahující slova
-        #     """
-        #
-        #     if lemmatized:
-        #         text = " ".join(self.lemmatize(text))
-        #
-        #     self.tokenizerPOS.setText(text)
-        #     words = []
-        #     while self.tokenizerPOS.nextSentence(self.forms, self.tokens):
-        #         self.taggerPOS.tag(self.forms, self.lemmas)
-        #         for i in range(len(self.lemmas)):
-        #             lemma = self.lemmas[i]
-        #             token = self.tokens[i]
-        #             self.converter.convert(lemma)
-        #             POS = lemma.tag.split("|")[0].split("=")[1]
-        #             if POS in only:
-        #                 words.append(text[token.start: token.start + token.length])
-        #
-        #     return words
-
-        # def translateNumericPOS(self, POS):
-        #     """
-        #     Přeloží slovní druh z číselné reprezentace do příslušné značky slovního druhu.
-        #
-        #     :param POS: list -- obsahující číselnou reprezentaci slovních druhů
-        #     :returns:  list -- obsahující značky slovních druhů
-        #     """
-        #     translated = []
-        #     for x in POS:
-        #         try:
-        #             x = int(x)
-        #         except ValueError:
-        #             pass
-        #
-        #         if x in self.__class__.__POSTranslaterNum:
-        #             translated.append(self.__class__.__POSTranslaterNum[x])
-        #         else:
-        #             translated.append(x)
-        #
-        #     return translated
