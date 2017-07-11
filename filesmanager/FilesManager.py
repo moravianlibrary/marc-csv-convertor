@@ -90,6 +90,7 @@ class FilesManager:
                                     shell=True))
         counter = 0
         processed = 0
+        list_of_processed_records = []
         with open(self.input_file) as iFile:
 
             with open(self.output_file, "w+") as o_file:
@@ -104,7 +105,7 @@ class FilesManager:
                 for line in iFile:
 
                     if line.startswith("LEADER") and len(marc_record) > 0:
-                        csv_writer.writerow(self.joiner(self.process_record(record=marc_record)))
+                        list_of_processed_records.append(self.joiner(self.process_record(record=marc_record)))
                         processed += 1
                         counter += 1
                         marc_record.clear()
@@ -113,8 +114,12 @@ class FilesManager:
                         counter = 0
                         print("{} of {} records processed".format(processed, amount_of_records))
 
+                    if len(list_of_processed_records) >= self.step:
+                        csv_writer.writerows(list_of_processed_records)
+                        list_of_processed_records.clear()
+
                     marc_record.append(line)
 
-                csv_writer.writerow(self.joiner(self.process_record(record=marc_record)))
+                csv_writer.writerows(list_of_processed_records)
                 processed += 1
                 print("{} of {} records processed".format(processed, amount_of_records))
