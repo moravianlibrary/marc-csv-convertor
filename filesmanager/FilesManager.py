@@ -88,6 +88,7 @@ class FilesManager:
         amount_of_records = int(
             subprocess.check_output('grep {} -e "^LEADER" | wc -l'.format(self.input_file), stderr=subprocess.STDOUT,
                                     shell=True))
+        print("Total {} records".format(amount_of_records))
         counter = 0
         processed = 0
         list_of_processed_records = []
@@ -120,6 +121,7 @@ class FilesManager:
 
                     marc_record.append(line)
 
+                list_of_processed_records.append(self.joiner(self.process_record(record=marc_record)))
                 csv_writer.writerows(list_of_processed_records)
                 processed += 1
                 print("{} of {} records processed".format(processed, amount_of_records))
